@@ -1,0 +1,7 @@
+30 true true 6 true University
+35 true true 7 true College
+28 false false 5 true School
+29 false true 3 true University
+23 false false 1 true School
+45 true true 20 true College
+39 false true 10 true University
