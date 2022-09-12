@@ -11,6 +11,10 @@ import java.util.regex.*;
 
 @Data
 public class CreditScoring {
+    private String lastName;
+    private String firstName;
+    private String middleName;
+    private int id;
     private int age;
     private boolean isMarried;
     private boolean hadCreditBefore;
@@ -22,8 +26,12 @@ public class CreditScoring {
         UNIVERSITY, COLLEGE, SCHOOL
     }
 
-    CreditScoring(int age, boolean isMarried, boolean hadCreditBefore, int workExperience, boolean haveCar, Education education)
-            throws IncorrectInputIntValues, YouAreTooYoungException, WrongEducationInputValue {
+    CreditScoring(String lastName, String firstName, String middleName, int id, int age, boolean isMarried, boolean hadCreditBefore, int workExperience, boolean haveCar, Education education)
+            throws YouAreTooYoungException, WrongEducationInputValue, IncorrectNameInformation {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.id = id;
         this.age = age;
         this.isMarried = isMarried;
         this.hadCreditBefore = hadCreditBefore;
@@ -31,13 +39,22 @@ public class CreditScoring {
         this.haveCar = haveCar;
         this.education = education;
 
-        checkEducation(education); // wrong education input value
-        valueIsNull(education); // if something is null
-        checkIntValues(age, workExperience); // if age or workExperience below zero
-        checkAge(age); // if age is below then 18
+        valueIsNull(education, firstName, middleName, lastName);
+        checkName(lastName, firstName, middleName);
+        checkEducation(education);
+        checkAge(age);
+        checkWorkExperience(workExperience);
     }
 
     public CreditScoring() {}
+
+    public final void checkName(String... name) throws IncorrectNameInformation {
+        for (String item: name) {
+            if (!Pattern.compile("[A-Z][a-z]+").matcher(item).matches()) {
+                throw new IncorrectNameInformation("You wrote incorrect name: " + item);
+            }
+        }
+    }
 
     public final void checkEducation(Education education) throws WrongEducationInputValue {
         if (!education.equals(Education.SCHOOL) && !education.equals(Education.UNIVERSITY) && !education.equals(Education.COLLEGE)) {
@@ -52,36 +69,45 @@ public class CreditScoring {
         }
     }
 
-    public final void checkIntValues(int... items) throws IncorrectInputIntValues {
-        if (Arrays.stream(items).anyMatch(x -> x < 0)) {
-            throw new IncorrectInputIntValues("You wrote incorrect values");
+    public final void checkWorkExperience(int workExperience) {
+        if (workExperience < 0) {
+            throw new IllegalArgumentException("You work experience can not be below zero");
         }
     }
 
     public final void checkAge(int age) throws YouAreTooYoungException {
+        if (age < 0) {
+            throw new IllegalArgumentException("Your age can not be below zero");
+        }
         if (age < 18) {
             throw new YouAreTooYoungException("You are too young to get a credit");
         }
     }
 
     public final void creditScoringFileReader(List<CreditScoring> creditScoringList)
-            throws IOException, YouAreTooYoungException, IncorrectInputIntValues, WrongEducationInputValue {
+            throws IOException, YouAreTooYoungException, WrongEducationInputValue, IncorrectNameInformation {
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get("creditScoringClientInformation.txt"), StandardCharsets.UTF_8)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                Matcher matcher =  Pattern.compile("\\w+").matcher(line);
-                List<String> listOfFileLine = new ArrayList<>();
-                while (matcher.find()) {
-                    listOfFileLine.add(matcher.group());
+                if (!line.isBlank()) {
+                    Matcher matcher =  Pattern.compile("[\\w-]+").matcher(line);
+                    List<String> listOfFileLine = new ArrayList<>();
+                    while (matcher.find()) {
+                        listOfFileLine.add(matcher.group());
+                    }
+                    creditScoringList.add(new CreditScoring(
+                            listOfFileLine.get(0),
+                            listOfFileLine.get(1),
+                            listOfFileLine.get(2),
+                            Integer.parseInt(listOfFileLine.get(3)),
+                            Integer.parseInt(listOfFileLine.get(4)),
+                            Boolean.parseBoolean(listOfFileLine.get(5)),
+                            Boolean.parseBoolean(listOfFileLine.get(6)),
+                            Integer.parseInt(listOfFileLine.get(7)),
+                            Boolean.parseBoolean(listOfFileLine.get(8)),
+                            Education.valueOf(listOfFileLine.get(9).toUpperCase())
+                    ));
                 }
-                creditScoringList.add(new CreditScoring(
-                        Integer.parseInt(listOfFileLine.get(0)),
-                        Boolean.parseBoolean(listOfFileLine.get(1)),
-                        Boolean.parseBoolean(listOfFileLine.get(2)),
-                        Integer.parseInt(listOfFileLine.get(3)),
-                        Boolean.parseBoolean(listOfFileLine.get(4)),
-                        Education.valueOf(listOfFileLine.get(5).toUpperCase())
-                ));
             }
         }
     }

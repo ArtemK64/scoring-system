@@ -6,13 +6,13 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args)
-            throws YouAreTooYoungException, IOException, IncorrectInputIntValues, WrongEducationInputValue {
+            throws YouAreTooYoungException, IOException, WrongEducationInputValue, IncorrectNameInformation {
         CreditScoring creditScoring = new CreditScoring();
         List<CreditScoring> creditScoringList = new ArrayList<>();
         creditScoring.creditScoringFileReader(creditScoringList);
 
         for (CreditScoring cs: creditScoringList) {
-            System.out.println(creditScoring.creditPotential(cs));
+            System.out.println(cs.getFirstName() + ", your credit potential: " + creditScoring.creditPotential(cs));
         }
     }
 }
