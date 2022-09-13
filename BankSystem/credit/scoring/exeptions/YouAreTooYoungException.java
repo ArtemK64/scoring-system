@@ -1,4 +1,4 @@
-package credit.scoring.exeptions;
+package scoring.exeptions;
 
 public class YouAreTooYoungException extends Exception {
     public YouAreTooYoungException() {

@@ -1,7 +1,7 @@
-package credit.scoring;
+package scoring;
 
-import credit.scoring.exeptions.*;
 import lombok.Data;
+import scoring.exeptions.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +27,7 @@ public class CreditScoring {
     }
 
     CreditScoring(String lastName, String firstName, String middleName, int id, int age, boolean isMarried, boolean hadCreditBefore, int workExperience, boolean haveCar, Education education)
-            throws YouAreTooYoungException, WrongEducationInputValue, IncorrectNameInformation {
+            throws YouAreTooYoungException, WrongEducationInputValue, IncorrectStringValue {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -39,53 +39,44 @@ public class CreditScoring {
         this.haveCar = haveCar;
         this.education = education;
 
-        valueIsNull(education, firstName, middleName, lastName);
-        checkName(lastName, firstName, middleName);
         checkEducation(education);
+        checkStringValue(lastName, firstName, middleName);
+        checkNegativeValue(workExperience, age);
         checkAge(age);
-        checkWorkExperience(workExperience);
     }
 
     public CreditScoring() {}
 
-    public final void checkName(String... name) throws IncorrectNameInformation {
-        for (String item: name) {
-            if (!Pattern.compile("[A-Z][a-z]+").matcher(item).matches()) {
-                throw new IncorrectNameInformation("You wrote incorrect name: " + item);
+    public static void checkNegativeValue(double... items) {
+        for (double item: items) {
+            if (item < 0) {
+                throw new IllegalArgumentException("Some values can not be below zero. Check your input information again");
             }
         }
     }
 
-    public final void checkEducation(Education education) throws WrongEducationInputValue {
+    public static void checkStringValue(String... items) throws IncorrectStringValue {
+        for (String item: items) {
+            if (!Pattern.compile("[a-z]+").matcher(item.toLowerCase()).matches()) {
+                throw new IncorrectStringValue("You wrote incorrect information. You can not write another symbols except letters in some fields");
+            }
+        }
+    }
+
+    private void checkEducation(Education education) throws WrongEducationInputValue {
         if (!education.equals(Education.SCHOOL) && !education.equals(Education.UNIVERSITY) && !education.equals(Education.COLLEGE)) {
             throw new WrongEducationInputValue("You wrote incorrect input education");
         }
     }
 
-    @SafeVarargs
-    public final <T> void valueIsNull(T... items) {
-        if (Arrays.stream(items).anyMatch(Objects::isNull)) {
-            throw new NullPointerException("We can not analyze a null values");
-        }
-    }
-
-    public final void checkWorkExperience(int workExperience) {
-        if (workExperience < 0) {
-            throw new IllegalArgumentException("You work experience can not be below zero");
-        }
-    }
-
-    public final void checkAge(int age) throws YouAreTooYoungException {
-        if (age < 0) {
-            throw new IllegalArgumentException("Your age can not be below zero");
-        }
+    private void checkAge(int age) throws YouAreTooYoungException {
         if (age < 18) {
             throw new YouAreTooYoungException("You are too young to get a credit");
         }
     }
 
     public final void creditScoringFileReader(List<CreditScoring> creditScoringList)
-            throws IOException, YouAreTooYoungException, WrongEducationInputValue, IncorrectNameInformation {
+            throws IOException, YouAreTooYoungException, WrongEducationInputValue, IncorrectStringValue {
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get("creditScoringClientInformation.txt"), StandardCharsets.UTF_8)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {

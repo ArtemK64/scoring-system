@@ -1,4 +1,4 @@
-package credit.scoring.exeptions;
+package scoring.exeptions;
 
 public class WrongEducationInputValue extends Exception {
     public WrongEducationInputValue() {
