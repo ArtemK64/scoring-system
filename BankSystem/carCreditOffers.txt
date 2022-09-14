@@ -1,0 +1,5 @@
+Flower 10.1 700000 true 36
+Rose 9.8 900000 true 36
+Flower 10.1 700000 true 36
+Circle 8.9 600000 false 24
+Flower 7.9 1200000 true 24

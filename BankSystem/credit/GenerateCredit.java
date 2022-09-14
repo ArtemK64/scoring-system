@@ -1,3 +1,4 @@
+import offers.CarCredit;
 import scoring.CreditScoring;
 import scoring.exeptions.*;
 import java.io.IOException;
@@ -14,7 +15,5 @@ public class GenerateCredit {
         for (CreditScoring cs: creditScoringList) {
             System.out.println("Hello, " + cs.getFirstName() + ". Credit potential: " + creditScoring.creditPotential(cs));
         }
-
-
     }
 }

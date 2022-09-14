@@ -107,21 +107,4 @@ public class Credit {
             default -> throw new IllegalArgumentException("You wrote incorrect value");
         }
     }
-
-    private void showOffers(String typeOfCredit) throws IOException {
-        switch (typeOfCredit.toUpperCase()) {
-            case "A" -> { // car credit
-                try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get("offersInformation.txt"), StandardCharsets.UTF_8)) {
-                    String line;
-                    if ((line = bufferedReader.readLine()) != null) {
-                        if (!line.isBlank()) {
-                            List<String> stringList =
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
 }
