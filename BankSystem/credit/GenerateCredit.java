@@ -1,7 +1,5 @@
-import offers.Credit;
 import scoring.CreditScoring;
 import scoring.exeptions.*;
-
 import java.io.IOException;
 import java.util.*;
 

@@ -63,7 +63,7 @@ public class CreditScoring {
         }
     }
 
-    private void checkEducation(Education education) throws WrongEducationInputValue {
+    private void checkEducation(Education education) throws WrongEducationInputValue { // ?
         if (!education.equals(Education.SCHOOL) && !education.equals(Education.UNIVERSITY) && !education.equals(Education.COLLEGE)) {
             throw new WrongEducationInputValue("You wrote incorrect input education");
         }
