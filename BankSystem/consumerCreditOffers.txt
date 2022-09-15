@@ -1,0 +1,10 @@
+Flower 30.2 25000 true 6
+Circle 29.5 35000 true 6
+Rose 28.9 46500 true 4
+Flower 28.8 45000 true 6
+Rose 27.9 21000 true 3
+Flower 30.2 35000 false 5
+Circle 29.5 25000 false 5
+Rose 28.9 46600 false 3
+Flower 30 49000 false 4
+Rose 26.5 23000 false 4

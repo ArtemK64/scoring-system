@@ -1,35 +1,24 @@
 package offers;
 
-import lombok.Data;
-import scoring.CreditScoring;
+import java.util.*;
 
-import java.util.Objects;
+public class Refinancing {
+    public static void generateRefinancingCredit(List<Credit> creditList, String scoringPotential) {
+        switch (scoringPotential) {
+            case "Average", "Good", "Great" -> {
+                Scanner scanner = new Scanner(System.in);
+                System.out.println("What amount of debt do you have?");
+                int amountOfDebt = scanner.nextInt();
 
-@Data
-public class Refinancing extends Credit {
-    private int amountOfDebt;
-    private double interestRateOfDebt;
+                System.out.println("What interest rate do you have of your credit?");
+                double interestRateOfDebt = scanner.nextDouble();
 
-    Refinancing(String nameOfBank, double interestRate, int amountOfMoney, boolean canPayBefore, int periodInMonth, int amountOfDebt, double interestRateOfDebt) {
-        super(nameOfBank, interestRate, amountOfMoney, canPayBefore, periodInMonth);
-        this.amountOfDebt = amountOfDebt;
-        this.interestRateOfDebt = interestRateOfDebt;
-
-        CreditScoring.checkNegativeValue(amountOfDebt, interestRateOfDebt);
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Refinancing that = (Refinancing) o;
-        return amountOfDebt == that.amountOfDebt && Double.compare(that.interestRateOfDebt, interestRateOfDebt) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), amountOfDebt, interestRateOfDebt);
+                for (Credit credit: creditList) {
+                    if (amountOfDebt / 1.2 < credit.getAmountOfMoney() && amountOfDebt > credit.getAmountOfMoney() && credit.getInterestRate() < interestRateOfDebt) {
+                        System.out.println(credit);
+                    }
+                }
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ public class CreditScoring {
     }
 
     CreditScoring(String lastName, String firstName, String middleName, int id, int age, boolean isMarried, boolean hadCreditBefore, int workExperience, boolean haveCar, Education education)
-            throws YouAreTooYoungException, WrongEducationInputValue, IncorrectStringValue {
+            throws YouAreTooYoungException, WrongEducationInputValueException, IncorrectStringValueException {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -55,17 +55,17 @@ public class CreditScoring {
         }
     }
 
-    public static void checkStringValue(String... items) throws IncorrectStringValue {
+    public static void checkStringValue(String... items) throws IncorrectStringValueException {
         for (String item: items) {
             if (!Pattern.compile("[a-z]+").matcher(item.toLowerCase()).matches()) {
-                throw new IncorrectStringValue("You wrote incorrect information. You can not write another symbols except letters in some fields");
+                throw new IncorrectStringValueException("You wrote incorrect information. You can not write another symbols except letters in some fields");
             }
         }
     }
 
-    private void checkEducation(Education education) throws WrongEducationInputValue { // ?
+    private void checkEducation(Education education) throws WrongEducationInputValueException { // ?
         if (!education.equals(Education.SCHOOL) && !education.equals(Education.UNIVERSITY) && !education.equals(Education.COLLEGE)) {
-            throw new WrongEducationInputValue("You wrote incorrect input education");
+            throw new WrongEducationInputValueException("You wrote incorrect input education");
         }
     }
 
@@ -75,8 +75,8 @@ public class CreditScoring {
         }
     }
 
-    public final void creditScoringFileReader(List<CreditScoring> creditScoringList)
-            throws IOException, YouAreTooYoungException, WrongEducationInputValue, IncorrectStringValue {
+    public static CreditScoring creditScoringFileReader(CreditScoring creditScoring)
+            throws IOException, YouAreTooYoungException, WrongEducationInputValueException, IncorrectStringValueException {
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get("creditScoringClientInformation.txt"), StandardCharsets.UTF_8)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -86,7 +86,7 @@ public class CreditScoring {
                     while (matcher.find()) {
                         listOfFileLine.add(matcher.group());
                     }
-                    creditScoringList.add(new CreditScoring(
+                    creditScoring = new CreditScoring(
                             listOfFileLine.get(0),
                             listOfFileLine.get(1),
                             listOfFileLine.get(2),
@@ -97,10 +97,11 @@ public class CreditScoring {
                             Integer.parseInt(listOfFileLine.get(7)),
                             Boolean.parseBoolean(listOfFileLine.get(8)),
                             Education.valueOf(listOfFileLine.get(9).toUpperCase())
-                    ));
+                    );
                 }
             }
         }
+        return creditScoring;
     }
 
     private int educationScoring(CreditScoring creditScoring) {
@@ -149,7 +150,7 @@ public class CreditScoring {
 
     public final String creditPotential(CreditScoring creditScoring) {
         int creditScoringResult = countScoring(creditScoring);
-        if (creditScoringResult < 75) return "Unfortunately, you will not get a credit";
+        if (creditScoringResult < 75) return "You will not get a credit";
         if (creditScoringResult < 90) return "Bad";
         if (creditScoringResult < 140) return "Below average";
         if (creditScoringResult < 180) return "Average";

@@ -1,40 +1,18 @@
 package offers;
 
-import lombok.Data;
-import scoring.CreditScoring;
-import scoring.exeptions.IncorrectStringValue;
+import offers.exceptions.YouAreNotSuitableException;
 
-import java.util.Objects;
+import java.util.*;
 
-@Data
-public class Mortgage extends Credit {
-    private String city;
-    private String street;
-    private String houseNumber;
-    private String apartmentNumber;
+public class Mortgage {
+    public static void generateMortgageOffers(List<Credit> creditList, String creditPotential)
+            throws YouAreNotSuitableException {
+        switch(creditPotential) {
+            case "Good", "Great" -> {
+                Credit.printList(creditList);
+            }
 
-    Mortgage(String nameOfBank, double interestRate, int amountOfMoney, boolean canPayBefore, int periodInMonth, String city, String street, String houseNumber, String apartmentNumber)
-            throws IncorrectStringValue {
-        super(nameOfBank, interestRate, amountOfMoney, canPayBefore, periodInMonth);
-        this.city = city;
-        this.street = street;
-        this.houseNumber = houseNumber;
-        this.apartmentNumber = apartmentNumber;
-
-        CreditScoring.checkStringValue(city, street);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Mortgage mortgage = (Mortgage) o;
-        return Objects.equals(city, mortgage.city) && Objects.equals(street, mortgage.street) && Objects.equals(houseNumber, mortgage.houseNumber) && Objects.equals(apartmentNumber, mortgage.apartmentNumber);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), city, street, houseNumber, apartmentNumber);
+            default -> throw new YouAreNotSuitableException("This type of credit is not suitable for you");
+        }
     }
 }

@@ -1,0 +1,10 @@
+Flower 5.6 4000000 true 120
+Rose 5.2 5500000 false 100
+Circle 5.6 6000000 true 120
+Flower 6.2 3500000 true 120
+Rose 4.9 6700000 false 200
+Rose 5.2 5400000 true 105
+Flower 5.6 4400000 false 130
+Flower 6.2 3100000 false 125
+Circle 5.6 5900000 false 115
+Rose 4.9 6200000 true 195

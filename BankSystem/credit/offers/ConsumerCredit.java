@@ -1,29 +1,20 @@
 package offers;
 
-import lombok.Data;
+import offers.exceptions.YouAreNotSuitableException;
 
-import java.util.Objects;
+import java.util.*;
 
-@Data
-public class ConsumerCredit extends Credit {
-    private String product;
+public class ConsumerCredit {
+    public static void generateConsumerCreditOffers(List<Credit> consumerCreditList, String creditPotential)
+            throws YouAreNotSuitableException {
+        if (creditPotential.equals("You will not get a credit")) {
+            throw new YouAreNotSuitableException("This type of credit is not suitable for you");
+        } else {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("What type of product do you want to get?");
+            String typeOfProduct = scanner.next();
 
-    ConsumerCredit(String nameOfBank, double interestRate, int amountOfMoney, boolean canPayBefore, int periodInMonth, String product) {
-        super(nameOfBank, interestRate, amountOfMoney, canPayBefore, periodInMonth);
-        this.product = product;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        ConsumerCredit that = (ConsumerCredit) o;
-        return Objects.equals(product, that.product);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), product);
+            Credit.printList(consumerCreditList);
+        }
     }
 }
