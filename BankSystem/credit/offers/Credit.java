@@ -29,8 +29,7 @@ public class Credit {
         CreditScoring.checkNegativeValue(interestRate, amountOfMoney, periodInMonth);
     }
 
-    public static void readFileOffers(List<Credit> creditList, String fileName)
-            throws IOException {
+    public static void readFileOffers(List<Credit> creditList, String fileName) throws IOException {
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(fileName), StandardCharsets.UTF_8)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -52,16 +51,18 @@ public class Credit {
         }
     }
 
-    private List<Credit> sortFields(List<Credit> creditList) {
+    private static List<Credit> sortFields(List<Credit> creditList) throws IncorrectStringValueException {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("How do you want to sort your fields?" +
-                "\nA. By name of bank" +
-                "\nB. By interest rate" +
-                "\nC. By amount of money" +
-                "\nD. By period of month" +
-                "\nE. Do not sort"
-        );
+        System.out.print("""
 
+                How do you want to sort your fields?
+                A. By name of bank
+                B. By interest rate
+                C. By amount of money
+                D. By period of month
+                E. Do not sort"""
+        );
+        System.out.print("\nInput value: ");
         String inputValue = scanner.next();
 
         switch (inputValue.toUpperCase()) {
@@ -72,16 +73,26 @@ public class Credit {
             case "E" -> {
                 return creditList;
             }
-            default -> throw new IllegalArgumentException("You wrote incorrect value");
+            default -> throw new IncorrectStringValueException("You wrote incorrect value");
         }
         return creditList;
     }
 
-    private void showCanPayBeforeOffers(List<Credit> creditList) {
-        for (Credit credit: creditList) {
-            if (credit.isCanPayBefore()) {
-                System.out.print(credit);
+    private static List<Credit> showCanPayBeforeOffers(List<Credit> creditList, String inputValue) throws IncorrectStringValueException {
+        switch (inputValue.toUpperCase()) {
+            case "YES" -> {
+                List<Credit> resultCreditList = new ArrayList<>();
+                for (Credit credit: creditList) {
+                    if (credit.isCanPayBefore()) {
+                        resultCreditList.add(credit);
+                    }
+                }
+                return resultCreditList;
             }
+            case "NO" -> {
+                return creditList;
+            }
+            default -> throw new IncorrectStringValueException("You wrote incorrect value");
         }
     }
 
@@ -91,26 +102,55 @@ public class Credit {
         }
     }
 
-    public static void generateCredit(List<Credit> creditList)
-            throws IOException, YouAreTooYoungException, IncorrectStringValueException, WrongEducationInputValueException, YouAreNotSuitableException {
+    public static void generateCredit()
+            throws IOException, YouAreTooYoungException, IncorrectStringValueException, YouAreNotSuitableException {
+        CreditScoring creditScoring = new CreditScoring();
+        creditScoring = CreditScoring.creditScoringFileReader(creditScoring);
+
+        System.out.println("\nHello, " + creditScoring.getFirstName() + ". Credit potential: " + creditScoring.creditPotential(creditScoring));
+
+        List<Credit> creditList = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Type of credit?" +
-                "A. Car credit" +
-                "B. Consumer credit" +
-                "C. Mortgage" +
-                "D. Refinancing");
+        System.out.println("""
+                Type of credit?
+                A. Car credit
+                B. Consumer credit
+                C. Mortgage
+                D. Refinancing""");
+        System.out.print("\nInput value: ");
         String typeOfCredit = scanner.next();
 
-        CreditScoring creditScoring = new CreditScoring();
-        CreditScoring.creditScoringFileReader(creditScoring);
+        String creditScoringPotential = creditScoring.creditPotential(creditScoring);
 
-        System.out.println("Hello, " + creditScoring.getFirstName() + ". Credit potential: " + creditScoring.creditPotential(creditScoring));
-
-        switch (typeOfCredit) {
+        switch (typeOfCredit.toUpperCase()) {
             case "A" -> {
                 readFileOffers(creditList, "carCreditOffers.txt");
-                CarCredit.generateCarCreditOffers(creditList, creditScoring.creditPotential(creditScoring));
+                creditList = CarCredit.generateCarCreditOffers(creditList, creditScoringPotential);
             }
+            case "B" -> {
+                readFileOffers(creditList, "consumerCreditOffers.txt");
+                ConsumerCredit.generateConsumerCreditOffers(creditList, creditScoringPotential);
+            }
+            case "C" -> {
+                readFileOffers(creditList, "mortgageOffers.txt");
+                Mortgage.generateMortgageOffers(creditList, creditScoringPotential);
+            }
+            case "D" -> {
+                readFileOffers(creditList, "refinancingOffers.txt");
+                creditList = Refinancing.generateRefinancingCredit(creditList, creditScoringPotential);
+            }
+            default -> throw new IncorrectStringValueException("You wrote incorrect value");
+        }
+        System.out.println("Should we show offers which you can pay before period will be end?");
+        System.out.print("Input value: ");
+        String inputValue = scanner.next();
+
+        creditList = showCanPayBeforeOffers(creditList, inputValue);
+
+        if (creditList.isEmpty()) {
+            System.out.println("\nUnfortunately, there are no offers for you :(");
+        } else {
+            printList(sortFields(creditList));
         }
     }
 }

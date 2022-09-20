@@ -5,8 +5,7 @@ import offers.exceptions.YouAreNotSuitableException;
 import java.util.*;
 
 public class CarCredit {
-    public static void generateCarCreditOffers(List<Credit> creditList, String creditPotential)
-            throws YouAreNotSuitableException {
+    public static List<Credit> generateCarCreditOffers(List<Credit> creditList, String creditPotential) throws YouAreNotSuitableException {
         switch (creditPotential) {
             case "Average", "Good", "Great" -> {
                 Scanner scanner = new Scanner(System.in);
@@ -19,11 +18,13 @@ public class CarCredit {
                 System.out.print("Was produced (country): ");
                 String manufacturerOfCar = scanner.next();
 
+                List<Credit> resultCreditList = new ArrayList<>();
                 for (Credit credit: creditList) {
                     if (priceOfCar / 1.2 < credit.getAmountOfMoney() && priceOfCar > credit.getAmountOfMoney()) {
-                        System.out.println(credit);
+                        resultCreditList.add(credit);
                     }
                 }
+                return resultCreditList;
             }
             default -> throw new YouAreNotSuitableException("This type of credit is not suitable for you");
         }

@@ -1,1 +1,1 @@
-Ivanov Ivan Ivanovich 45389 30 true true 0 true University
+Ivanov Ivan Ivanovich 45389 30 true true 10 true University

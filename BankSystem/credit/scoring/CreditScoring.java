@@ -27,7 +27,7 @@ public class CreditScoring {
     }
 
     CreditScoring(String lastName, String firstName, String middleName, int id, int age, boolean isMarried, boolean hadCreditBefore, int workExperience, boolean haveCar, Education education)
-            throws YouAreTooYoungException, WrongEducationInputValueException, IncorrectStringValueException {
+            throws YouAreTooYoungException, IncorrectStringValueException {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -39,7 +39,6 @@ public class CreditScoring {
         this.haveCar = haveCar;
         this.education = education;
 
-        checkEducation(education);
         checkStringValue(lastName, firstName, middleName);
         checkNegativeValue(workExperience, age);
         checkAge(age);
@@ -63,12 +62,6 @@ public class CreditScoring {
         }
     }
 
-    private void checkEducation(Education education) throws WrongEducationInputValueException { // ?
-        if (!education.equals(Education.SCHOOL) && !education.equals(Education.UNIVERSITY) && !education.equals(Education.COLLEGE)) {
-            throw new WrongEducationInputValueException("You wrote incorrect input education");
-        }
-    }
-
     private void checkAge(int age) throws YouAreTooYoungException {
         if (age < 18) {
             throw new YouAreTooYoungException("You are too young to get a credit");
@@ -76,7 +69,7 @@ public class CreditScoring {
     }
 
     public static CreditScoring creditScoringFileReader(CreditScoring creditScoring)
-            throws IOException, YouAreTooYoungException, WrongEducationInputValueException, IncorrectStringValueException {
+            throws IOException, YouAreTooYoungException, IncorrectStringValueException {
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get("creditScoringClientInformation.txt"), StandardCharsets.UTF_8)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
